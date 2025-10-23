@@ -1,0 +1,131 @@
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
+
+export default function GeneratorPerencanaanPembelajaran() {
+  const [data, setData] = useState({
+    topik: '',
+    mapel: '',
+    materi: '',
+    jumlahPertemuan: '',
+    durasi: '',
+    dimensi: [],
+    tujuan: '',
+    pedagogis: '',
+    kemitraan: '',
+    lingkungan: '',
+    digital: '',
+    memahami: '',
+    mengaplikasikan: '',
+    merefleksikan: '',
+    asesmenAwal: '',
+    asesmenProses: '',
+    asesmenSumatif: ''
+  });
+
+  const dimensiList = [
+    'Keimanan dan Ketakwaan kepada Tuhan YME',
+    'Kewargaan',
+    'Penalaran Kritis',
+    'Kreativitas',
+    'Kolaborasi',
+    'Kemandirian',
+    'Kesehatan',
+    'Komunikasi'
+  ];
+
+  const pilihanTahapan = ['Berkesadaran', 'Bermakna', 'Menggembirakan'];
+
+  const handleChange = (e) => {
+    setData({ ...data, [e.target.name]: e.target.value });
+  };
+
+  const toggleDimensi = (dimensi) => {
+    setData((prev) => ({
+      ...prev,
+      dimensi: prev.dimensi.includes(dimensi)
+        ? prev.dimensi.filter((d) => d !== dimensi)
+        : [...prev.dimensi, dimensi]
+    }));
+  };
+
+  const [hasil, setHasil] = useState('');
+
+  const generate = () => {
+    const output = `PERENCANAAN PEMBELAJARAN\n\nTopik: ${data.topik}\nMata Pelajaran: ${data.mapel}\nMateri: ${data.materi}\nJumlah Pertemuan: ${data.jumlahPertemuan}\nDurasi: ${data.durasi} menit\n\nIDENTIFIKASI\nDimensi Profil Lulusan: ${data.dimensi.join(', ')}\n\nDESAIN PEMBELAJARAN\nTujuan Pembelajaran: ${data.tujuan}\n   (Tuliskan tujuan pembelajaran yang mencakup kompetensi dan konten pada ruang lingkup materi dengan menggunakan kata kerja operasional yang relevan.)\n\nPraktik Pedagogis: ${data.pedagogis}\n   (Tuliskan Model/Strategi/Metode pembelajaran yang dipilih untuk mencapai tujuan belajar, seperti pembelajaran berbasis masalah, pembelajaran berbasis proyek, pembelajaran inkuiri, pembelajaran kontekstual, dan sebagainya.)\n\nKemitraan Pembelajaran: ${data.kemitraan}\n   (Opsional) Tuliskan kegiatan kemitraan atau kolaborasi dalam dan/atau luar lingkup sekolah, seperti kemitraan antar guru lintas mata pelajaran, antar murid lintas kelas, antar guru lintas sekolah, orang tua, komunitas, tokoh masyarakat, dunia usaha dan dunia industri kerja, institusi, atau mitra profesional.)\n\nLingkungan Pembelajaran: ${data.lingkungan}\n   (Tuliskan lingkungan pembelajaran yang ingin dikembangkan dalam budaya belajar, ruang fisik dan/atau ruang virtual. Budaya belajar dikembangkan agar tercipta iklim belajar yang aman, nyaman, dan saling memuliakan. Contoh: memberikan kesempatan kepada siswa untuk menyampaikan pendapatnya dalam ruang kelas dan forum diskusi pada platform daring.)\n\nPemanfaatan Digital: ${data.digital}\n   (Opsional) Tuliskan pemanfaatan teknologi digital untuk menciptakan pembelajaran yang interaktif, kolaboratif, dan kontekstual. Contoh: video pembelajaran, platform pembelajaran, perpustakaan digital, forum diskusi daring, aplikasi penilaian, dan sebagainya.)\n\nTAHAPAN PEMBELAJARAN\n1. Memahami (${data.memahami})\n   → Siswa dibimbing untuk memahami konsep ${data.materi} melalui kegiatan yang ${data.memahami.toLowerCase()}, seperti diskusi, eksplorasi ide, dan pembimbingan guru.\n\n2. Mengaplikasikan (${data.mengaplikasikan})\n   → Peserta didik menerapkan pengetahuan tentang ${data.materi} dalam konteks nyata melalui aktivitas yang ${data.mengaplikasikan.toLowerCase()}, misalnya proyek kecil, eksperimen, atau simulasi.\n\n3. Merefleksikan (${data.merefleksikan})\n   → Siswa melakukan refleksi secara ${data.merefleksikan.toLowerCase()} untuk menilai kembali proses dan hasil belajarnya, serta mengaitkannya dengan nilai-nilai kehidupan.\n\nASESMEN PEMBELAJARAN\n1. Asesmen Formatif Awal\n   → ${data.asesmenAwal}\n   Digunakan untuk mengetahui pengetahuan awal siswa terkait ${data.materi} sebelum pembelajaran dimulai.\n\n2. Asesmen Formatif Proses\n   → ${data.asesmenProses}\n   Bertujuan memantau perkembangan kompetensi siswa selama proses belajar berlangsung melalui observasi, kuis, atau umpan balik guru.\n\n3. Asesmen Sumatif\n   → ${data.asesmenSumatif}\n   Menilai capaian akhir siswa terhadap tujuan pembelajaran pada topik ${data.topik}.`;
+
+    setHasil(output);
+  };
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto space-y-6">
+      <Card className="shadow-xl border-2 border-blue-200">
+        <CardContent className="space-y-4">
+          <h1 className="text-2xl font-bold text-blue-700 text-center">Generator Perencanaan Pembelajaran</h1>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input name="topik" placeholder="Topik" value={data.topik} onChange={handleChange} />
+            <Input name="mapel" placeholder="Mata Pelajaran" value={data.mapel} onChange={handleChange} />
+            <Input name="materi" placeholder="Materi" value={data.materi} onChange={handleChange} />
+            <Input name="jumlahPertemuan" placeholder="Jumlah Pertemuan" value={data.jumlahPertemuan} onChange={handleChange} />
+            <Input name="durasi" placeholder="Durasi setiap pertemuan (menit)" value={data.durasi} onChange={handleChange} />
+          </div>
+
+          <h2 className="text-lg font-semibold text-blue-600">Dimensi Profil Lulusan</h2>
+          <div className="grid grid-cols-2 gap-2">
+            {dimensiList.map((d, i) => (
+              <label key={i} className="flex items-center space-x-2">
+                <Checkbox checked={data.dimensi.includes(d)} onCheckedChange={() => toggleDimensi(d)} />
+                <span>{d}</span>
+              </label>
+            ))}
+          </div>
+
+          <h2 className="text-lg font-semibold text-blue-600 mt-4">Desain Pembelajaran</h2>
+          <Textarea name="tujuan" placeholder="Tujuan Pembelajaran" value={data.tujuan} onChange={handleChange} />
+          <Textarea name="pedagogis" placeholder="Praktik Pedagogis" value={data.pedagogis} onChange={handleChange} />
+          <Textarea name="kemitraan" placeholder="Kemitraan Pembelajaran" value={data.kemitraan} onChange={handleChange} />
+          <Textarea name="lingkungan" placeholder="Lingkungan Pembelajaran" value={data.lingkungan} onChange={handleChange} />
+          <Textarea name="digital" placeholder="Pemanfaatan Digital" value={data.digital} onChange={handleChange} />
+
+          <h2 className="text-lg font-semibold text-blue-600 mt-4">Tahapan Pembelajaran</h2>
+          {['memahami', 'mengaplikasikan', 'merefleksikan'].map((t) => (
+            <div key={t} className="space-y-2">
+              <label className="font-medium capitalize">Tahapan: {t}</label>
+              <select
+                name={t}
+                value={data[t]}
+                onChange={handleChange}
+                className="w-full border rounded-md p-2"
+              >
+                <option value="">Pilih...</option>
+                {pilihanTahapan.map((p, i) => (
+                  <option key={i} value={p}>{p}</option>
+                ))}
+              </select>
+            </div>
+          ))}
+
+          <h2 className="text-lg font-semibold text-blue-600 mt-4">Asesmen Pembelajaran</h2>
+          <Textarea name="asesmenAwal" placeholder="Asesmen Formatif Awal" value={data.asesmenAwal} onChange={handleChange} />
+          <Textarea name="asesmenProses" placeholder="Asesmen Formatif Proses" value={data.asesmenProses} onChange={handleChange} />
+          <Textarea name="asesmenSumatif" placeholder="Asesmen Sumatif" value={data.asesmenSumatif} onChange={handleChange} />
+
+          <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={generate}>Generate Rencana Pembelajaran</Button>
+        </CardContent>
+      </Card>
+
+      {hasil && (
+        <Card className="shadow-lg border border-green-200 bg-green-50">
+          <CardContent>
+            <h2 className="text-xl font-bold text-green-700 mb-2">Hasil Generator</h2>
+            <pre className="whitespace-pre-wrap text-gray-700 bg-white p-4 rounded-xl border border-gray-200">{hasil}</pre>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
