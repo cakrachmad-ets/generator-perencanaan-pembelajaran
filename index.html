@@ -1,131 +1,590 @@
-import { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Perencanaan Pembelajaran</title>
+    <!-- Memuat Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Memuat Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Warna latar belakang yang lebih halus */
+        }
+        .card {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+             /* Efek hover minimalis untuk kesan profesional */
+        }
+        .input-field {
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        /* Style untuk Print (PDF) */
+        @media print {
+            .card, #result-container {
+                box-shadow: none !important;
+                border: none !important;
+            }
+            body {
+                background-color: white;
+            }
+            /* Sembunyikan form dan tombol cetak itu sendiri */
+            #plan-form, .no-print {
+                display: none !important;
+            }
+            #result-container {
+                display: block !important; /* Pastikan hasil ditampilkan saat dicetak */
+                margin-top: 0;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-12">
+    <div class="max-w-5xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-gray-800">GENERATOR PERENCANAAN PEMBELAJARAN</h1>
+            <!-- Keterangan Modifikasi yang diminta di bawah judul utama -->
+            <p class="text-sm italic text-gray-500 mt-2">Modifikasi oleh Rachmad Effendi TS., M.Pd - SMK Negeri 2 Trenggalek</p>
+            <p class="text-gray-600 mt-2">Alat bantu cepat penyusunan draf rencana pembelajaran (RPP/Modul Ajar).</p>
+        </header>
 
-export default function GeneratorPerencanaanPembelajaran() {
-  const [data, setData] = useState({
-    topik: '',
-    mapel: '',
-    materi: '',
-    jumlahPertemuan: '',
-    durasi: '',
-    dimensi: [],
-    tujuan: '',
-    pedagogis: '',
-    kemitraan: '',
-    lingkungan: '',
-    digital: '',
-    memahami: '',
-    mengaplikasikan: '',
-    merefleksikan: '',
-    asesmenAwal: '',
-    asesmenProses: '',
-    asesmenSumatif: ''
-  });
+        <!-- Form Input -->
+        <div class="card bg-white p-6 md:p-10 rounded-2xl space-y-8 shadow-xl">
+            <form id="plan-form">
+                
+                <!-- Bagian 1: Informasi Umum -->
+                <section class="border-b pb-8 border-gray-200">
+                    <h2 class="text-2xl font-bold text-indigo-800 mb-6">1. Informasi Umum</h2>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="lg:col-span-2">
+                            <label for="topik" class="block text-sm font-medium text-gray-700">Topik</label>
+                            <input type="text" id="topik" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Pemanasan Global" required>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label for="materi" class="block text-sm font-medium text-gray-700">Materi Pokok</label>
+                            <input type="text" id="materi" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Dampak dan Solusi" required>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <label for="mapel" class="block text-sm font-medium text-gray-700">Mata Pelajaran</label>
+                            <input type="text" id="mapel" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Ilmu Pengetahuan Alam" required>
+                        </div>
+                        <div>
+                            <label for="jml_pertemuan" class="block text-sm font-medium text-gray-700">Jumlah Pertemuan</label>
+                            <input type="number" id="jml_pertemuan" min="1" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" value="1" required>
+                        </div>
+                        <div>
+                            <label for="durasi" class="block text-sm font-medium text-gray-700">Durasi (Contoh: 2 x 45 menit)</label>
+                            <input type="text" id="durasi" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: 2 x 45 menit" required>
+                        </div>
+                    </div>
+                </section>
 
-  const dimensiList = [
-    'Keimanan dan Ketakwaan kepada Tuhan YME',
-    'Kewargaan',
-    'Penalaran Kritis',
-    'Kreativitas',
-    'Kolaborasi',
-    'Kemandirian',
-    'Kesehatan',
-    'Komunikasi'
-  ];
+                <!-- Bagian 2: Identifikasi & Desain Pembelajaran -->
+                <section class="border-b pb-8 border-gray-200 mt-8 space-y-6">
+                    <h2 class="text-2xl font-bold text-indigo-800">2. Identifikasi & Desain Pembelajaran</h2>
+                    
+                    <!-- Dimensi Profil Lulusan (Checkbox) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Dimensi Profil Lulusan yang Dikembangkan (Pilih ≥ 1)</label>
+                        <div id="dimensi_profil_checkboxes" class="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-2 text-sm">
+                            <!-- Checkbox options -->
+                            <div class="flex items-center">
+                                <input type="checkbox" id="dimensi_iman" name="dimensi_profil" value="Keimanan dan ketakwaan kepada Tuhan YME" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="dimensi_iman" class="ml-2 text-gray-700">Keimanan & Ketakwaan</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="dimensi_warga" name="dimensi_profil" value="Kewargaan" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="dimensi_warga" class="ml-2 text-gray-700">Kewargaan</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="dimensi_kritis" name="dimensi_profil" value="Penalaran Kritis" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="dimensi_kritis" class="ml-2 text-gray-700">Penalaran Kritis</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="dimensi_kreatif" name="dimensi_profil" value="Kreativitas" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="dimensi_kreatif" class="ml-2 text-gray-700">Kreativitas</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="dimensi_kolaborasi" name="dimensi_profil" value="Kolaborasi" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="dimensi_kolaborasi" class="ml-2 text-gray-700">Kolaborasi</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="dimensi_mandiri" name="dimensi_profil" value="Kemandirian" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="dimensi_mandiri" class="ml-2 text-gray-700">Kemandirian</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="dimensi_sehat" name="dimensi_profil" value="Kesehatan" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="dimensi_sehat" class="ml-2 text-gray-700">Kesehatan</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="dimensi_komunikasi" name="dimensi_profil" value="Komunikasi" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <label for="dimensi_komunikasi" class="ml-2 text-gray-700">Komunikasi</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Akhir Dimensi Profil Lulusan -->
 
-  const pilihanTahapan = ['Berkesadaran', 'Bermakna', 'Menggembirakan'];
+                    <!-- Tujuan Pembelajaran -->
+                    <div>
+                        <label for="tujuan_pembelajaran" class="block text-sm font-medium text-gray-700">Tujuan Pembelajaran (Kompetensi & Konten)</label>
+                        <textarea id="tujuan_pembelajaran" rows="3" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Gunakan Kata Kerja Operasional (KKO) yang relevan, contoh: Menganalisis dampak pemanasan global terhadap ekosistem darat dan laut." required></textarea>
+                    </div>
 
-  const handleChange = (e) => {
-    setData({ ...data, [e.target.name]: e.target.value });
-  };
+                    <!-- Praktis Pedagogis (Dropdown) -->
+                    <div>
+                        <label for="praktis_pedagogis" class="block text-sm font-medium text-gray-700">Praktis Pedagogis (Model/Strategi/Metode)</label>
+                        <select id="praktis_pedagogis" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" required>
+                            <option value="" disabled selected>Pilih model/strategi pembelajaran</option>
+                            <option value="Pembelajaran Berbasis Masalah (Problem-Based Learning)">Pembelajaran Berbasis Masalah (Problem-Based Learning)</option>
+                            <option value="Pembelajaran Berbasis Proyek (Project-Based Learning)">Pembelajaran Berbasis Proyek (Project-Based Learning)</option>
+                            <option value="Pembelajaran Inkuiri">Pembelajaran Inkuiri</option>
+                            <option value="Pembelajaran Kontekstual">Pembelajaran Kontekstual</option>
+                            <option value="Diskusi dan Presentasi Kelompok">Diskusi dan Presentasi Kelompok</option>
+                        </select>
+                    </div>
 
-  const toggleDimensi = (dimensi) => {
-    setData((prev) => ({
-      ...prev,
-      dimensi: prev.dimensi.includes(dimensi)
-        ? prev.dimensi.filter((d) => d !== dimensi)
-        : [...prev.dimensi, dimensi]
-    }));
-  };
+                    <!-- Kemitraan Pembelajaran (Opsional) -->
+                    <div>
+                        <label for="kemitraan" class="block text-sm font-medium text-gray-700">Kemitraan Pembelajaran (Opsional)</label>
+                        <textarea id="kemitraan" rows="2" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Kemitraan dengan tokoh masyarakat lokal/Dunia Usaha dan Dunia Industri kerja untuk studi kasus."></textarea>
+                    </div>
 
-  const [hasil, setHasil] = useState('');
+                    <!-- Lingkungan Pembelajaran -->
+                    <div>
+                        <label for="lingkungan" class="block text-sm font-medium text-gray-700">Lingkungan Pembelajaran</label>
+                        <textarea id="lingkungan" rows="3" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Menciptakan budaya belajar yang aman dan menghargai perbedaan pendapat di ruang kelas dan platform diskusi daring."></textarea>
+                    </div>
 
-  const generate = () => {
-    const output = `PERENCANAAN PEMBELAJARAN\n\nTopik: ${data.topik}\nMata Pelajaran: ${data.mapel}\nMateri: ${data.materi}\nJumlah Pertemuan: ${data.jumlahPertemuan}\nDurasi: ${data.durasi} menit\n\nIDENTIFIKASI\nDimensi Profil Lulusan: ${data.dimensi.join(', ')}\n\nDESAIN PEMBELAJARAN\nTujuan Pembelajaran: ${data.tujuan}\n   (Tuliskan tujuan pembelajaran yang mencakup kompetensi dan konten pada ruang lingkup materi dengan menggunakan kata kerja operasional yang relevan.)\n\nPraktik Pedagogis: ${data.pedagogis}\n   (Tuliskan Model/Strategi/Metode pembelajaran yang dipilih untuk mencapai tujuan belajar, seperti pembelajaran berbasis masalah, pembelajaran berbasis proyek, pembelajaran inkuiri, pembelajaran kontekstual, dan sebagainya.)\n\nKemitraan Pembelajaran: ${data.kemitraan}\n   (Opsional) Tuliskan kegiatan kemitraan atau kolaborasi dalam dan/atau luar lingkup sekolah, seperti kemitraan antar guru lintas mata pelajaran, antar murid lintas kelas, antar guru lintas sekolah, orang tua, komunitas, tokoh masyarakat, dunia usaha dan dunia industri kerja, institusi, atau mitra profesional.)\n\nLingkungan Pembelajaran: ${data.lingkungan}\n   (Tuliskan lingkungan pembelajaran yang ingin dikembangkan dalam budaya belajar, ruang fisik dan/atau ruang virtual. Budaya belajar dikembangkan agar tercipta iklim belajar yang aman, nyaman, dan saling memuliakan. Contoh: memberikan kesempatan kepada siswa untuk menyampaikan pendapatnya dalam ruang kelas dan forum diskusi pada platform daring.)\n\nPemanfaatan Digital: ${data.digital}\n   (Opsional) Tuliskan pemanfaatan teknologi digital untuk menciptakan pembelajaran yang interaktif, kolaboratif, dan kontekstual. Contoh: video pembelajaran, platform pembelajaran, perpustakaan digital, forum diskusi daring, aplikasi penilaian, dan sebagainya.)\n\nTAHAPAN PEMBELAJARAN\n1. Memahami (${data.memahami})\n   → Siswa dibimbing untuk memahami konsep ${data.materi} melalui kegiatan yang ${data.memahami.toLowerCase()}, seperti diskusi, eksplorasi ide, dan pembimbingan guru.\n\n2. Mengaplikasikan (${data.mengaplikasikan})\n   → Peserta didik menerapkan pengetahuan tentang ${data.materi} dalam konteks nyata melalui aktivitas yang ${data.mengaplikasikan.toLowerCase()}, misalnya proyek kecil, eksperimen, atau simulasi.\n\n3. Merefleksikan (${data.merefleksikan})\n   → Siswa melakukan refleksi secara ${data.merefleksikan.toLowerCase()} untuk menilai kembali proses dan hasil belajarnya, serta mengaitkannya dengan nilai-nilai kehidupan.\n\nASESMEN PEMBELAJARAN\n1. Asesmen Formatif Awal\n   → ${data.asesmenAwal}\n   Digunakan untuk mengetahui pengetahuan awal siswa terkait ${data.materi} sebelum pembelajaran dimulai.\n\n2. Asesmen Formatif Proses\n   → ${data.asesmenProses}\n   Bertujuan memantau perkembangan kompetensi siswa selama proses belajar berlangsung melalui observasi, kuis, atau umpan balik guru.\n\n3. Asesmen Sumatif\n   → ${data.asesmenSumatif}\n   Menilai capaian akhir siswa terhadap tujuan pembelajaran pada topik ${data.topik}.`;
+                    <!-- Pemanfaatan Digital (Opsional) -->
+                    <div>
+                        <label for="digital" class="block text-sm font-medium text-gray-700">Pemanfaatan Digital (Opsional)</label>
+                        <textarea id="digital" rows="2" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Penggunaan video pembelajaran interaktif, simulasi online, atau platform penilaian digital."></textarea>
+                    </div>
+                </section>
 
-    setHasil(output);
-  };
+                <!-- Bagian 3: Tahapan Pembelajaran (Diubah menjadi Checkbox) -->
+                <section class="border-b pb-8 border-gray-200 mt-8">
+                    <h2 class="text-2xl font-bold text-indigo-800 mb-6">3. Tahapan Pembelajaran (Fokus Pengembangan)</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        
+                        <!-- Memahami -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tahapan: Memahami (Pilih Fokus)</label>
+                            <div class="space-y-1 mt-1 text-sm">
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_memahami" id="fokus_memahami_kesadaran" value="Berkesadaran" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="fokus_memahami_kesadaran" class="ml-2 text-gray-700">Berkesadaran</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_memahami" id="fokus_memahami_makna" value="Bermakna" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="fokus_memahami_makna" class="ml-2 text-gray-700">Bermakna</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_memahami" id="fokus_memahami_gembira" value="Menggembirakan" class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="fokus_memahami_gembira" class="ml-2 text-gray-700">Menggembirakan</label>
+                                </div>
+                            </div>
+                        </div>
 
-  return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <Card className="shadow-xl border-2 border-blue-200">
-        <CardContent className="space-y-4">
-          <h1 className="text-2xl font-bold text-blue-700 text-center">Generator Perencanaan Pembelajaran</h1>
+                        <!-- Mengaplikasikan -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tahapan: Mengaplikasikan (Pilih Fokus)</label>
+                            <div class="space-y-1 mt-1 text-sm">
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_mengaplikasikan" id="fokus_aplikasi_kesadaran" value="Berkesadaran" class="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                    <label for="fokus_aplikasi_kesadaran" class="ml-2 text-gray-700">Berkesadaran</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_mengaplikasikan" id="fokus_aplikasi_makna" value="Bermakna" class="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                    <label for="fokus_aplikasi_makna" class="ml-2 text-gray-700">Bermakna</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_mengaplikasikan" id="fokus_aplikasi_gembira" value="Menggembirakan" class="h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                    <label for="fokus_aplikasi_gembira" class="ml-2 text-gray-700">Menggembirakan</label>
+                                </div>
+                            </div>
+                        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Input name="topik" placeholder="Topik" value={data.topik} onChange={handleChange} />
-            <Input name="mapel" placeholder="Mata Pelajaran" value={data.mapel} onChange={handleChange} />
-            <Input name="materi" placeholder="Materi" value={data.materi} onChange={handleChange} />
-            <Input name="jumlahPertemuan" placeholder="Jumlah Pertemuan" value={data.jumlahPertemuan} onChange={handleChange} />
-            <Input name="durasi" placeholder="Durasi setiap pertemuan (menit)" value={data.durasi} onChange={handleChange} />
-          </div>
+                        <!-- Merefleksikan -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Tahapan: Merefleksikan (Pilih Fokus)</label>
+                            <div class="space-y-1 mt-1 text-sm">
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_merefleksikan" id="fokus_refleksi_kesadaran" value="Berkesadaran" class="h-4 w-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500">
+                                    <label for="fokus_refleksi_kesadaran" class="ml-2 text-gray-700">Berkesadaran</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_merefleksikan" id="fokus_refleksi_makna" value="Bermakna" class="h-4 w-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500">
+                                    <label for="fokus_refleksi_makna" class="ml-2 text-gray-700">Bermakna</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="fokus_merefleksikan" id="fokus_refleksi_gembira" value="Menggembirakan" class="h-4 w-4 text-yellow-600 border-gray-300 rounded focus:ring-yellow-500">
+                                    <label for="fokus_refleksi_gembira" class="ml-2 text-gray-700">Menggembirakan</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-          <h2 className="text-lg font-semibold text-blue-600">Dimensi Profil Lulusan</h2>
-          <div className="grid grid-cols-2 gap-2">
-            {dimensiList.map((d, i) => (
-              <label key={i} className="flex items-center space-x-2">
-                <Checkbox checked={data.dimensi.includes(d)} onCheckedChange={() => toggleDimensi(d)} />
-                <span>{d}</span>
-              </label>
-            ))}
-          </div>
+                <!-- Bagian 4: Asesmen Pembelajaran -->
+                <section class="mt-8 space-y-4">
+                    <h2 class="text-2xl font-bold text-indigo-800 mb-6">4. Asesmen Pembelajaran</h2>
+                    <!-- Asesmen formatif awal -->
+                    <div>
+                        <label for="asesmen_awal" class="block text-sm font-medium text-gray-700">1. Asesmen Formatif Awal (Diagnostik)</label>
+                        <textarea id="asesmen_awal" rows="2" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Kuis singkat (pre-test) untuk mengukur pengetahuan awal siswa terkait materi." required></textarea>
+                    </div>
+                    <!-- Asesmen formatif proses -->
+                    <div>
+                        <label for="asesmen_proses" class="block text-sm font-medium text-gray-700">2. Asesmen Formatif Proses</label>
+                        <textarea id="asesmen_proses" rows="2" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Observasi saat diskusi kelompok, penilaian formatif berupa lembar kerja."></textarea>
+                    </div>
+                    <!-- Asesmen sumatif -->
+                    <div>
+                        <label for="asesmen_sumatif" class="block text-sm font-medium text-gray-700">3. Asesmen Sumatif</label>
+                        <textarea id="asesmen_sumatif" rows="2" class="mt-1 block w-full input-field focus:border-indigo-600 focus:ring-indigo-600" placeholder="Contoh: Projek laporan penelitian, tes tertulis akhir unit."></textarea>
+                    </div>
+                </section>
 
-          <h2 className="text-lg font-semibold text-blue-600 mt-4">Desain Pembelajaran</h2>
-          <Textarea name="tujuan" placeholder="Tujuan Pembelajaran" value={data.tujuan} onChange={handleChange} />
-          <Textarea name="pedagogis" placeholder="Praktik Pedagogis" value={data.pedagogis} onChange={handleChange} />
-          <Textarea name="kemitraan" placeholder="Kemitraan Pembelajaran" value={data.kemitraan} onChange={handleChange} />
-          <Textarea name="lingkungan" placeholder="Lingkungan Pembelajaran" value={data.lingkungan} onChange={handleChange} />
-          <Textarea name="digital" placeholder="Pemanfaatan Digital" value={data.digital} onChange={handleChange} />
+                <!-- Tombol Generator -->
+                <div class="mt-10">
+                    <button type="submit" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-4 px-4 rounded-xl transition duration-300 shadow-lg shadow-indigo-300 transform hover:scale-[1.01]">
+                        <span id="generate-button-text">Buat Perencanaan Pembelajaran</span>
+                    </button>
+                </div>
+            </form>
+        </div>
 
-          <h2 className="text-lg font-semibold text-blue-600 mt-4">Tahapan Pembelajaran</h2>
-          {['memahami', 'mengaplikasikan', 'merefleksikan'].map((t) => (
-            <div key={t} className="space-y-2">
-              <label className="font-medium capitalize">Tahapan: {t}</label>
-              <select
-                name={t}
-                value={data[t]}
-                onChange={handleChange}
-                className="w-full border rounded-md p-2"
-              >
-                <option value="">Pilih...</option>
-                {pilihanTahapan.map((p, i) => (
-                  <option key={i} value={p}>{p}</option>
-                ))}
-              </select>
+        <!-- Hasil Generator -->
+        <div id="result-container" class="mt-12 hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 border-b-4 border-indigo-600 pb-2">DRAF PERENCANAAN PEMBELAJARAN DETAIL</h2>
+            <div id="plan-output" class="card bg-white p-6 md:p-10 rounded-2xl border border-gray-100 shadow-xl">
+                <!-- Isi hasil akan dimuat di sini oleh JavaScript -->
             </div>
-          ))}
+            
+            <div class="text-center mt-6 py-4 border-t border-gray-300">
+                <p class="text-sm text-gray-500 font-semibold">Modifikasi oleh Rachmad Effendi TS., M.Pd - SMK Negeri 2 Trenggalek</p>
+            </div>
 
-          <h2 className="text-lg font-semibold text-blue-600 mt-4">Asesmen Pembelajaran</h2>
-          <Textarea name="asesmenAwal" placeholder="Asesmen Formatif Awal" value={data.asesmenAwal} onChange={handleChange} />
-          <Textarea name="asesmenProses" placeholder="Asesmen Formatif Proses" value={data.asesmenProses} onChange={handleChange} />
-          <Textarea name="asesmenSumatif" placeholder="Asesmen Sumatif" value={data.asesmenSumatif} onChange={handleChange} />
+            <!-- Penjelasan cara mengunduh PDF (Ditambahkan) -->
+            <div class="text-center mt-6 text-sm text-gray-600 no-print">
+                <p class="font-semibold text-indigo-700">💡 Petunjuk Unduh:</p>
+                <p>Tekan tombol di bawah ini, lalu pada jendela cetak yang muncul, ubah **Tujuan** cetak menjadi **Simpan sebagai PDF (Save as PDF)**.</p>
+            </div>
 
-          <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={generate}>Generate Rencana Pembelajaran</Button>
-        </CardContent>
-      </Card>
-
-      {hasil && (
-        <Card className="shadow-lg border border-green-200 bg-green-50">
-          <CardContent>
-            <h2 className="text-xl font-bold text-green-700 mb-2">Hasil Generator</h2>
-            <pre className="whitespace-pre-wrap text-gray-700 bg-white p-4 rounded-xl border border-gray-200">{hasil}</pre>
-          </CardContent>
-        </Card>
-      )}
+            <!-- Tombol Unduh/Cetak (Non-Print) -->
+            <button onclick="window.print()" class="no-print mt-4 w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center mx-auto">
+                <!-- Menggunakan inline SVG untuk ikon Unduh/Cetak -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5 8V4a1 1 0 011-1h8a1 1 0 011 1v4h2a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4H9v4a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h2zm4-5H6a1 1 0 00-1 1v3h6V4a1 1 0 00-1-1z" clip-rule="evenodd" />
+                </svg>
+                Unduh Draf (Cetak ke PDF)
+            </button>
+        </div>
     </div>
-  );
-}
+
+    <script>
+        document.getElementById('plan-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            generatePlan();
+        });
+
+        const focusDetails = {
+            'Berkesadaran': 'Fokus pada pengembangan kesadaran diri, metakognisi, dan kontrol emosi selama proses pembelajaran.',
+            'Bermakna': 'Fokus pada relevansi materi dengan kehidupan nyata siswa, serta koneksi antar konsep dan konteks.',
+            'Menggembirakan': 'Fokus pada penciptaan pengalaman belajar yang positif, menyenangkan, dan mendorong motivasi intrinsik.'
+        };
+
+        const phaseColors = {
+            'Memahami': 'border-blue-600 bg-blue-50 text-blue-700',
+            'Mengaplikasikan': 'border-green-600 bg-green-50 text-green-700',
+            'Merefleksikan': 'border-yellow-600 bg-yellow-50 text-yellow-700',
+        };
+
+        /**
+         * Fungsi untuk menghasilkan langkah-langkah detail Tahapan Pembelajaran untuk SATU fokus.
+         */
+        function generateTahapanDetail(phase, focus, materi) {
+            let steps = [];
+            const materialPlaceholder = `konsep ${materi.toLowerCase().trim() || 'materi pokok'}`;
+
+            if (phase === 'Memahami') {
+                if (focus === 'Berkesadaran') {
+                    steps = [
+                        `Aktivitas Pembuka: Guru memimpin latihan kesadaran (mindfulness) singkat (2 menit) untuk memfokuskan emosi dan perhatian siswa sebelum mempelajari ${materialPlaceholder}.`,
+                        `Eksplorasi Mandiri: Siswa secara mandiri meninjau sumber belajar tentang ${materialPlaceholder} dan mencatat pertanyaan yang muncul.`,
+                        `Refleksi Metakognitif Awal: Siswa menuliskan prediksi atau asumsi awal mereka terkait ${materialPlaceholder} dan mencatat strategi belajar yang akan mereka gunakan.`
+                    ];
+                } else if (focus === 'Bermakna') {
+                    steps = [
+                        `Koneksi Dunia Nyata: Guru mempresentasikan studi kasus atau masalah otentik terkait ${materialPlaceholder} di lingkungan sekitar atau berita terkini.`,
+                        `Diskusi Kritis: Siswa berdiskusi untuk menghubungkan ${materialPlaceholder} dengan pengetahuan yang sudah mereka miliki (prior knowledge activation).`,
+                        `Merumuskan Relevansi: Siswa merumuskan kembali definisi atau konsep kunci ${materialPlaceholder} dengan bahasa mereka sendiri, memastikan relevansi personal dan sosial.`
+                    ];
+                } else if (focus === 'Menggembirakan') {
+                    steps = [
+                        `Ice Breaking Interaktif: Menggunakan kuis berbasis gamifikasi (e.g., kuis singkat digital) untuk memperkenalkan istilah kunci dalam ${materialPlaceholder} dengan suasana kompetitif yang sehat.`,
+                        `Eksperimen/Demonstrasi Singkat: Siswa melakukan demonstrasi/eksperimen kecil yang memicu rasa ingin tahu terkait ${materialPlaceholder}.`,
+                        `Sesi Tanya Jawab Cepat: Membuat sesi Q&A yang ringan dan interaktif ('Lempar Bola Pertanyaan') untuk mendorong partisipasi aktif dan suasana kelas yang positif.`
+                    ];
+                }
+            } else if (phase === 'Mengaplikasikan') {
+                if (focus === 'Berkesadaran') {
+                    steps = [
+                        `Aplikasi Terkontrol: Siswa menerapkan ${materialPlaceholder} dalam tugas atau proyek (sesuai Praktis Pedagogis yang dipilih) sambil dipandu untuk memantau tingkat fokus dan kemajuan kerja mereka (self-monitoring).`,
+                        `Jurnal Reflektif Aplikasi: Siswa mencatat tantangan kognitif atau emosional yang dihadapi selama aplikasi dan bagaimana mereka mengatasi hambatan tersebut secara sadar.`,
+                        `Umpan Balik Bertahap: Guru melakukan *coaching* singkat per kelompok, fokus pada proses pengambilan keputusan siswa dan pengembangan keterampilan mengatasi masalah.`
+                    ];
+                } else if (focus === 'Bermakna') {
+                    steps = [
+                        `Proyek Solusi Otentik: Siswa bekerja dalam kelompok untuk merancang solusi praktis terhadap masalah nyata menggunakan ${materialPlaceholder}, menghasilkan produk yang memiliki dampak.`,
+                        `Presentasi Kontekstual: Siswa mempresentasikan hasil aplikasi mereka kepada audiens, dengan penekanan pada bagaimana solusi tersebut menyelesaikan masalah di konteks yang relevan.`,
+                        `Analisis Kasus Lintas Bidang: Siswa menganalisis bagaimana ${materialPlaceholder} dapat diaplikasikan dan diintegrasikan dengan mata pelajaran atau bidang lain, memperluas pemahaman kontekstual.`
+                    ];
+                } else if (focus === 'Menggembirakan') {
+                    steps = [
+                        `Simulasi Berperan Kreatif: Mengadakan simulasi atau role-playing yang melibatkan skenario imajinatif atau menantang di mana siswa harus menggunakan ${materialPlaceholder}.`,
+                        `Kompetisi Konstruktif: Mengadakan tantangan/mini-kompetisi (misalnya, membuat model terbaik, tantangan desain) yang mendorong aplikasi materi dalam suasana yang seru.`,
+                        `Kreasi Media Digital: Siswa membuat konten digital (video/podcast/infografis) yang menyenangkan dan informatif tentang ${materialPlaceholder} untuk dibagikan ke platform kelas.`
+                    ];
+                }
+            } else if (phase === 'Merefleksikan') {
+                if (focus === 'Berkesadaran') {
+                    steps = [
+                        `Refleksi Diri Mendalam (Tulis): Siswa mengisi kuesioner refleksi mendalam mengenai perasaan, usaha, dan pertumbuhan kognitif-emosional mereka selama unit ini.`,
+                        `Goal Setting Lanjutan: Siswa menetapkan tujuan belajar pribadi yang baru dan spesifik (SMART goals) berdasarkan area kelemahan dan kekuatan yang teridentifikasi.`,
+                        `Berbagi Rasa: Sesi berbagi di mana siswa menceritakan momen 'Aha!' atau kesulitan terbesar yang mereka alami selama pembelajaran (sharing circle).`
+                    ];
+                } else if (focus === 'Bermakna') {
+                    steps = [
+                        `Evaluasi Dampak: Siswa mengevaluasi dampak jangka pendek dan panjang dari solusi atau proyek yang mereka buat terhadap komunitas atau isu global.`,
+                        `Diskusi Etika/Moral: Mengadakan diskusi kelompok kecil tentang implikasi etis, sosial, atau keberlanjutan dari ${materialPlaceholder}.`,
+                        `Portofolio Makna: Siswa memilih karya terbaik mereka dan menulis esai/narasi singkat tentang mengapa karya tersebut memiliki makna (meaningful) bagi proses belajar mereka dan masa depan.`
+                    ];
+                } else if (focus === 'Menggembirakan') {
+                    steps = [
+                        `Galeri Karya & Apresiasi: Mengadakan pameran mini atau panggung apresiasi di kelas untuk merayakan hasil kerja semua siswa dengan musik atau dekorasi ringan.`,
+                        `Survei Kepuasan Belajar: Siswa memberikan penilaian anonim terhadap kegiatan pembelajaran dan tingkat kesenangan mereka (misalnya, menggunakan stiker emoji).`,
+                        `Pesta Komitmen: Melakukan aktivitas penutup yang ringan dan meriah (misalnya, membuat 'kapsul waktu' komitmen belajar) untuk mengakhiri unit dengan semangat positif.`
+                    ];
+                }
+            }
+            
+            // Format the steps into an HTML list
+            // Tambahkan label fokus di awal setiap set langkah
+            const focusLabel = `<li class="font-semibold text-gray-800 mt-2 mb-1 border-t pt-1">Fokus: ${focus}</li>`;
+            return focusLabel + steps.map(step => `<li class="text-sm text-gray-700 leading-relaxed">${step}</li>`).join('');
+        }
+        
+        // Helper function to generate the phase section HTML
+        function generatePhaseSection(phase, focusString, detailHTML, subtitle = '') {
+            if (!detailHTML.trim()) return ''; // Jangan tampilkan jika tidak ada fokus terpilih
+            
+            const colors = phaseColors[phase];
+            return `
+                <div class="border-l-4 ${colors.split(' ')[0]} pl-3 py-3 mt-4 ${colors.split(' ')[1]} rounded-lg">
+                    <p class="font-bold text-base ${colors.split(' ')[2]}">${phase} ${subtitle ? `(${subtitle})` : ''}</p>
+                    <p class="text-sm italic text-gray-600 mb-2">Fokus Terpilih: ${focusString}</p>
+                    <ul class="list-decimal list-outside space-y-1 ml-4 pt-1">
+                        ${detailHTML}
+                    </ul>
+                </div>
+            `;
+        }
+
+        function generatePlan() {
+            document.getElementById('generate-button-text').textContent = 'Membuat...';
+            
+            // 1. Ambil Semua Nilai Input
+            const data = {
+                // Informasi Umum
+                topik: document.getElementById('topik').value,
+                mapel: document.getElementById('mapel').value,
+                materi: document.getElementById('materi').value,
+                jml_pertemuan: document.getElementById('jml_pertemuan').value,
+                durasi: document.getElementById('durasi').value,
+                
+                // Identifikasi & Desain
+                dimensi_profil: Array.from(document.querySelectorAll('input[name="dimensi_profil"]:checked'))
+                                    .map(cb => cb.value)
+                                    .join(', '),
+                tujuan_pembelajaran: document.getElementById('tujuan_pembelajaran').value,
+                praktis_pedagogis: document.getElementById('praktis_pedagogis').value,
+                kemitraan: document.getElementById('kemitraan').value,
+                lingkungan: document.getElementById('lingkungan').value,
+                digital: document.getElementById('digital').value,
+                
+                // Tahapan (Ambil semua fokus yang dicentang)
+                fokus_memahami: Array.from(document.querySelectorAll('input[name="fokus_memahami"]:checked')).map(cb => cb.value),
+                fokus_mengaplikasikan: Array.from(document.querySelectorAll('input[name="fokus_mengaplikasikan"]:checked')).map(cb => cb.value),
+                fokus_merefleksikan: Array.from(document.querySelectorAll('input[name="fokus_merefleksikan"]:checked')).map(cb => cb.value),
+
+                // Asesmen
+                asesmen_awal: document.getElementById('asesmen_awal').value,
+                asesmen_proses: document.getElementById('asesmen_proses').value,
+                asesmen_sumatif: document.getElementById('asesmen_sumatif').value,
+            };
+
+            const materiDetail = data.materi.trim() || 'Materi Pembelajaran'; // Fallback
+            
+            // --- Logika Perhitungan Durasi Total ---
+            const totalMeetings = parseInt(data.jml_pertemuan);
+            const durationText = data.durasi.toLowerCase().replace(/\s/g, ''); // Contoh: "2x45menit"
+            let timeString = 'Tidak Terdefinisi'; // Initialize for fallback
+
+            // Parsing durasi (mencari pola XxYmenit)
+            const match = durationText.match(/(\d+)x(\d+)menit/);
+            if (match) {
+                const numSessions = parseInt(match[1]);
+                const durationPerSession = parseInt(match[2]);
+                const totalMinutes = totalMeetings * numSessions * durationPerSession;
+                
+                // Konversi total menit ke jam dan menit
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+
+                timeString = ''; // Reset for calculated string
+                if (hours > 0) timeString += `${hours} jam `;
+                if (minutes > 0 || hours === 0) timeString += `${minutes} menit`;
+                
+                timeString = `<span class="font-semibold text-indigo-700">${timeString.trim()}</span>`; // Apply styling here
+            } else {
+                 timeString = `<span class="font-semibold text-red-500">Hitungan tidak tersedia (Format durasi harus XxY menit)</span>`;
+            }
+            const calculatedTimeString = timeString;
+            // ----------------------------------------
+
+            // Gabungkan langkah-langkah detail untuk SEMUA fokus yang dipilih per tahap
+            const tahapMemahamiDetail = data.fokus_memahami.map(fokus => generateTahapanDetail('Memahami', fokus, materiDetail)).join('');
+            const tahapMengaplikasikanDetail = data.fokus_mengaplikasikan.map(fokus => generateTahapanDetail('Mengaplikasikan', fokus, materiDetail)).join('');
+            const tahapMerefleksikanDetail = data.fokus_merefleksikan.map(fokus => generateTahapanDetail('Merefleksikan', fokus, materiDetail)).join('');
+
+            let meetingBreakdownHTML = '';
+            
+            // Loop untuk membuat rincian per Pertemuan
+            for (let i = 1; i <= totalMeetings; i++) {
+                let meetingContent = '';
+                let meetingPhaseNotes = [];
+
+                if (totalMeetings === 1) {
+                    // 1 Pertemuan: Semua Fase
+                    meetingContent += generatePhaseSection('Memahami', data.fokus_memahami.join(', '), tahapMemahamiDetail);
+                    meetingContent += generatePhaseSection('Mengaplikasikan', data.fokus_mengaplikasikan.join(', '), tahapMengaplikasikanDetail);
+                    meetingContent += generatePhaseSection('Merefleksikan', data.fokus_merefleksikan.join(', '), tahapMerefleksikanDetail);
+                    meetingPhaseNotes.push('Memahami (Lengkap), Mengaplikasikan, dan Merefleksikan');
+                } else if (i === 1) {
+                    // Pertemuan Awal: Memahami (Fokus) + Awal Mengaplikasikan
+                    meetingContent += generatePhaseSection('Memahami', data.fokus_memahami.join(', '), tahapMemahamiDetail, 'Fokus Utama');
+                    // Ambil sebagian kecil dari Mengaplikasikan
+                    const awalAplikasiDetail = tahapMengaplikasikanDetail.split('</li>').slice(0, 3).join('</li>') + '</li>';
+                    meetingContent += generatePhaseSection('Mengaplikasikan', data.fokus_mengaplikasikan.join(', '), awalAplikasiDetail, 'Awal/Perencanaan');
+                    meetingPhaseNotes.push('Fase Memahami dan Awal Mengaplikasikan');
+                } else if (i > 1 && i < totalMeetings) {
+                    // Pertemuan Tengah: Inti Mengaplikasikan
+                    meetingContent += generatePhaseSection('Mengaplikasikan', data.fokus_mengaplikasikan.join(', '), tahapMengaplikasikanDetail, 'Inti Kegiatan/Proyek');
+                    meetingPhaseNotes.push('Fase Inti Mengaplikasikan');
+                } else if (i === totalMeetings && totalMeetings > 1) {
+                    // Pertemuan Akhir: Penyelesaian Mengaplikasikan + Merefleksikan (Fokus)
+                    // Ambil sebagian kecil dari Mengaplikasikan (misalnya 3 langkah terakhir)
+                    const akhirAplikasiDetail = tahapMengaplikasikanDetail.split('</li>').slice(-4).join('</li>');
+                    meetingContent += generatePhaseSection('Mengaplikasikan', data.fokus_mengaplikasikan.join(', '), akhirAplikasiDetail, 'Penyelesaian/Presentasi');
+                    meetingContent += generatePhaseSection('Merefleksikan', data.fokus_merefleksikan.join(', '), tahapMerefleksikanDetail, 'Fokus Utama');
+                    meetingPhaseNotes.push('Penyelesaian Mengaplikasikan dan Fase Merefleksikan');
+                }
+
+                meetingBreakdownHTML += `
+                    <div class="mt-6 p-4 border-2 border-indigo-300 rounded-xl bg-indigo-50">
+                        <h4 class="font-extrabold text-xl text-indigo-800 mb-2">Pertemuan ${i}</h4>
+                        <p class="text-sm italic text-gray-600 mb-4">Fokus Kegiatan: ${meetingPhaseNotes.join(', ')} | Alokasi Waktu: <span class="font-bold">${data.durasi}</span>.</p>
+                        ${meetingContent}
+                    </div>
+                `;
+            }
+            
+            // Fallback jika tidak ada dimensi yang dipilih
+            const displayDimensi = data.dimensi_profil || 'Tidak ada dimensi spesifik yang dipilih.';
+            
+            // 2. Buat Teks Output HTML
+            let outputHTML = `
+                <div class="space-y-8">
+                    <!-- Bagian A: Informasi Umum -->
+                    <div class="p-6 bg-indigo-50 rounded-xl border border-indigo-200">
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3">A. INFORMASI UMUM</h3>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 text-base gap-3 text-gray-700">
+                            <p><strong>Topik:</strong> ${data.topik}</p>
+                            <p><strong>Mata Pelajaran:</strong> ${data.mapel}</p>
+                            <p><strong>Materi Pokok:</strong> ${data.materi}</p>
+                            
+                            <!-- Detail Durasi Waktu -->
+                            <p><strong>Jumlah Pertemuan:</strong> <span class="font-semibold">${data.jml_pertemuan}</span></p>
+                            <p><strong>Durasi per Pertemuan:</strong> <span class="font-semibold">${data.durasi}</span></p>
+                            <p><strong>Total Alokasi Waktu:</strong> ${calculatedTimeString}</p>
+                            <!-- Akhir Detail Durasi Waktu -->
+                        </div>
+                    </div>
+
+                    <!-- Bagian B: Identifikasi & Desain Pembelajaran -->
+                    <div>
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b border-indigo-200 pb-1">B. IDENTIFIKASI & DESAIN PEMBELAJARAN</h3>
+                        <ul class="text-gray-700 space-y-2 text-base ml-4 list-disc list-outside">
+                            <li><strong>Dimensi Profil Lulusan:</strong> <span class="font-semibold text-indigo-600">${displayDimensi}</span></li>
+                            <li><strong>Tujuan Pembelajaran:</strong> ${data.tujuan_pembelajaran}</li>
+                            <li><strong>Praktis Pedagogis:</strong> ${data.praktis_pedagogis}</li>
+                            ${data.kemitraan ? `<li><strong>Kemitraan Pembelajaran:</strong> ${data.kemitraan}</li>` : ''}
+                            <li><strong>Lingkungan Pembelajaran:</strong> ${data.lingkungan}</li>
+                            ${data.digital ? `<li><strong>Pemanfaatan Digital:</strong> ${data.digital}</li>` : ''}
+                        </ul>
+                    </div>
+
+                    <!-- Bagian C: TAHAPAN PEMBELAJARAN (PER TEMUAN) -->
+                    <div>
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b border-indigo-200 pb-1">C. TAHAPAN PEMBELAJARAN (Rincian per Pertemuan)</h3>
+                        ${meetingBreakdownHTML}
+                    </div>
+
+                    <!-- Bagian D: ASESMEN PEMBELAJARAN -->
+                    <div>
+                        <h3 class="font-bold text-xl text-indigo-700 mb-3 border-b border-indigo-200 pb-1">D. ASESMEN PEMBELAJARAN (Detail Pelaksanaan)</h3>
+                        
+                        <div class="space-y-4 mt-4 text-base text-gray-700">
+                            <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <p class="font-semibold text-red-700 mb-1">1. Asesmen Formatif Awal (Diagnostik)</p>
+                                <p><strong>Pelaksanaan:</strong> ${data.asesmen_awal}</p>
+                                <p class="mt-2 text-xs italic">Tujuan: Mengukur kesiapan dan pengetahuan prasyarat siswa. Hasil digunakan untuk diferensiasi.</p>
+                            </div>
+                            <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                                <p class="font-semibold text-purple-700 mb-1">2. Asesmen Formatif Proses</p>
+                                <p><strong>Pelaksanaan:</strong> ${data.asesmen_proses}</p>
+                                <p class="mt-2 text-xs italic">Tujuan: Memantau kemajuan belajar siswa dan memberikan umpan balik segera (feedback loop) untuk perbaikan.</p>
+                            </div>
+                            <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                                <p class="font-semibold text-orange-700 mb-1">3. Asesmen Sumatif</p>
+                                <p><strong>Pelaksanaan:</strong> ${data.asesmen_sumatif}</p>
+                                <p class="mt-2 text-xs italic">Tujuan: Mengukur pencapaian tujuan pembelajaran secara keseluruhan di akhir unit/periode belajar.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // 3. Tampilkan Hasil
+            document.getElementById('plan-output').innerHTML = outputHTML;
+            document.getElementById('result-container').classList.remove('hidden');
+            
+            // Scroll ke hasil
+            document.getElementById('result-container').scrollIntoView({ behavior: 'smooth' });
+
+            // Reset tombol
+            document.getElementById('generate-button-text').textContent = 'Buat Perencanaan Pembelajaran';
+        }
+    </script>
+</body>
+</html>
