@@ -274,20 +274,33 @@
                 <p class="text-sm text-gray-500 font-semibold">Modifikasi oleh Rachmad Effendi TS., M.Pd - SMK Negeri 2 Trenggalek</p>
             </div>
 
-            <!-- Penjelasan cara mengunduh PDF (Ditambahkan) -->
-            <div class="text-center mt-6 text-sm text-gray-600 no-print">
+            <!-- Penjelasan cara mengunduh PDF/Word -->
+            <div id="download-instructions" class="text-center mt-6 text-sm text-gray-600 no-print">
                 <p class="font-semibold text-indigo-700">💡 Petunjuk Unduh:</p>
-                <p>Tekan tombol di bawah ini, lalu pada jendela cetak yang muncul, ubah **Tujuan** cetak menjadi **Simpan sebagai PDF (Save as PDF)**.</p>
+                <p class="mb-2">Gunakan salah satu tombol di bawah ini. Untuk PDF, pilih "Simpan sebagai PDF" pada jendela cetak.</p>
             </div>
 
             <!-- Tombol Unduh/Cetak (Non-Print) -->
-            <button onclick="window.print()" class="no-print mt-4 w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center mx-auto">
-                <!-- Menggunakan inline SVG untuk ikon Unduh/Cetak -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5 8V4a1 1 0 011-1h8a1 1 0 011 1v4h2a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4H9v4a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h2zm4-5H6a1 1 0 00-1 1v3h6V4a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-                Unduh Draf (Cetak ke PDF)
-            </button>
+            <div class="no-print mt-4 flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
+                
+                <!-- Tombol Unduh Word (.doc) -->
+                <button id="download-word-btn" onclick="downloadWord()" class="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center">
+                    <!-- Ikon Word (Mengganti ikon) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 8a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm1 3a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                    </svg>
+                    Unduh Draf (Word .doc)
+                </button>
+
+                <!-- Tombol Unduh PDF (Cetak) -->
+                <button onclick="window.print()" class="w-full md:w-auto bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-200 flex items-center justify-center">
+                    <!-- Ikon Cetak -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5 8V4a1 1 0 011-1h8a1 1 0 011 1v4h2a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4H9v4a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1h2zm4-5H6a1 1 0 00-1 1v3h6V4a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Unduh Draf (Cetak ke PDF)
+                </button>
+            </div>
         </div>
     </div>
 
@@ -398,6 +411,65 @@
                     </ul>
                 </div>
             `;
+        }
+        
+        /**
+         * Fungsi untuk mengunduh hasil generator sebagai berkas .doc (Microsoft Word).
+         */
+        function downloadWord() {
+            const content = document.getElementById('plan-output').innerHTML;
+            const topic = document.getElementById('topik').value.trim().replace(/\s/g, '_') || 'Draft_RPP';
+            const filename = `Perencanaan_Pembelajaran_${topic}.doc`;
+
+            // Konten HTML dengan tag MSO untuk kompatibilitas Word
+            const htmlContent = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Perencanaan Pembelajaran</title>
+                    <style>
+                        /* Gaya dasar untuk kompatibilitas Word */
+                        body { font-family: 'Inter', sans-serif; }
+                        h1, h2, h3 { color: #374151; }
+                        .space-y-8 > div { margin-bottom: 24px; }
+                        /* Memastikan border dan warna dasar terbawa */
+                        .card { box-shadow: none; border: 1px solid #ccc; padding: 16px; margin-bottom: 16px; }
+                        .bg-indigo-50 { background-color: #f5f3ff !important; }
+                        .border-indigo-200 { border-color: #c7d2fe !important; }
+                        .border-indigo-300 { border-color: #a5b4fc !important; }
+                        .border-l-4 { border-left-width: 4px; border-left-style: solid; }
+                        .border-blue-600 { border-left-color: #2563eb !important; }
+                        .bg-blue-50 { background-color: #eff6ff !important; }
+                        .text-blue-700 { color: #1d4ed8 !important; }
+                        .shadow-xl { box-shadow: none; } 
+                        /* Mengatasi daftar berpoin/bernomor di Word */
+                        ul.list-decimal { list-style-type: decimal; margin-left: 30pt; padding-left: 0; } 
+                        ul.list-disc { list-style-type: disc; margin-left: 30pt; padding-left: 0; }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                </body>
+                </html>
+            `;
+
+            // Konversi string HTML ke Blob
+            const blob = new Blob(['\ufeff', htmlContent], {
+                type: 'application/msword'
+            });
+
+            // Mendukung IE/Edge
+            if (window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveOrOpenBlob(blob, filename);
+            } else {
+                // Browser Modern
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
         }
 
         function generatePlan() {
